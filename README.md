@@ -1,59 +1,136 @@
-🧠 AI Memory Assistant
-An AI-powered conversational assistant that provides persistent, user-specific long-term memory across independent chat sessions.
-Unlike a conventional chatbot that mainly relies on the current conversation, this application can identify important facts from user conversations, store them as memories, retrieve relevant memories in future conversations, update outdated information, summarize long conversations, and give users control over what the system remembers.
-🚀 Key Features
-1. User Authentication
+Absolutely — here is the **GitHub-ready `README.md` content** in Markdown code format. You can copy everything inside the code block directly into your `README.md`.
+
+```markdown
+# 🧠 AI Memory Assistant
+
+An AI-powered conversational assistant with **persistent, user-specific long-term memory** across independent chat sessions.
+
+Unlike a conventional chatbot that mainly relies on the current conversation, this application can identify important information from conversations, store it as long-term memory, retrieve relevant memories in future conversations, update outdated information, summarize long conversations, and give users control over what the system remembers.
+
+---
+
+## 🚀 Key Features
+
+### 🔐 1. User Authentication
+
 - User registration and login
 - Secure password hashing using Werkzeug
 - Flask session-based authentication
 - Logout support
 - Separate memory space for every user
-2. Multi-Session Chat
+
+### 💬 2. Multi-Session Chat
+
 - Create multiple independent chat sessions
 - Store messages for each session
 - Reopen previous conversations
 - Long-term memories are shared across sessions for the same user
-3. Automatic Long-Term Memory
-The system uses the LLM to identify information worth remembering from conversations.
-Example:
-"My preferred programming language is Python."
+
+### 🧠 3. Automatic Long-Term Memory
+
+The system uses an LLM to identify information worth remembering from conversations.
+
+For example:
+
+> "My preferred programming language is Python."
 
 The system can create:
+
+```text
 Category: PROGRAMMING_LANGUAGE
 Fact: User prefers Python
 Importance: 8/10
-4. Memory Actions: ADD / UPDATE / IGNORE
-The memory extraction system can decide whether to:
-- ADD a new memory
-- UPDATE an existing memory
-- IGNORE information that is not useful as long-term memory
+```
+
+This memory can then be retrieved in future conversations.
+
+---
+
+### 🔄 4. ADD / UPDATE / IGNORE Memory
+
+The memory system can decide whether to:
+
+- **ADD** a new memory
+- **UPDATE** an existing memory
+- **IGNORE** information that does not need to be stored
+
 Example:
-Previous:
+
+```text
+Previous Memory:
 PROGRAMMING_LANGUAGE → Python
 
-User correction:
+User:
 "I now prefer Java."
 
-Result:
+Updated Memory:
 PROGRAMMING_LANGUAGE → Java
-The latest corrected value becomes authoritative.
-5. Memory Importance and Expiration
-Every memory receives an importance score from 1–10.
-The application uses importance to determine memory retention.
-1–3   → short retention
-4–5   → medium retention
-6–7   → long retention
-8–10  → permanent
-Expired memories are removed from the active memory stores.
-6. Semantic Memory Retrieval
+```
+
+The latest corrected value becomes the authoritative memory.
+
+---
+
+### ⭐ 5. Memory Importance Scoring
+
+Every memory receives an importance score from **1–10**.
+
+Example:
+
+```text
+User likes blue
+→ Importance: 3/10
+
+User prefers Java
+→ Importance: 8/10
+
+User's long-term career goal
+→ Importance: 10/10
+```
+
+The importance score is also used for memory retention.
+
+---
+
+### ⏳ 6. Memory Expiration
+
+The application uses importance to determine how long a memory should remain active.
+
+```text
+Importance 1–3   → Short retention
+Importance 4–5   → Medium retention
+Importance 6–7   → Long retention
+Importance 8–10  → Permanent
+```
+
+Expired memories are automatically removed from active storage.
+
+---
+
+### 🔎 7. Semantic Memory Retrieval
+
 ChromaDB is used as the semantic retrieval layer.
-This allows the application to retrieve memories based on meaning rather than exact keyword matching.
-For example, a stored memory:
+
+This allows the system to retrieve memories based on **meaning**, rather than requiring an exact keyword match.
+
+For example, stored memory:
+
+```text
 User prefers Java.
+```
+
 can be relevant to:
+
+```text
 "What programming language am I most comfortable with?"
-7. SQLite as Source of Truth
+```
+
+---
+
+### 🗄️ 8. SQLite as the Source of Truth
+
 SQLite stores structured application data including:
+
 - Users
 - Chat sessions
 - Messages
@@ -61,54 +138,142 @@ SQLite stores structured application data including:
 - Conversation summaries
 - Deleted-memory records
 - Server-run information
-SQLite is treated as the authoritative source of the current memory state.
-ChromaDB is used primarily for semantic retrieval.
-8. Memory Conflict Resolution
-The application handles outdated memories.
-For example:
+
+SQLite acts as the **authoritative source of the current memory state**.
+
+ChromaDB is primarily used for semantic retrieval.
+
+---
+
+### ⚡ 9. Memory Conflict Resolution
+
+The application handles outdated or conflicting information.
+
+Example:
+
+```text
 Old conversation:
 "I prefer Python."
 
-Current memory:
+Current Memory:
 PROGRAMMING_LANGUAGE → Java
-For a memory query such as:
+```
+
+If the user asks:
+
+```text
 "What programming language do I prefer?"
-the current memory is treated as authoritative rather than allowing stale conversation history to override it.
-9. User-Controlled Memory
-The memory panel allows users to:
+```
+
+the current memory is treated as authoritative.
+
+Therefore:
+
+```text
+Old information → Python
+Current memory  → Java
+                       ↓
+                   Answer: Java
+```
+
+This prevents stale conversation history from overriding an updated memory.
+
+---
+
+### ✏️ 10. User-Controlled Memory
+
+Users can manage their memories through the memory panel.
+
+Available operations:
+
 - View memories
 - Edit memories
 - Delete memories
 - View importance
 - View expiration information
-10. Deleted-Memory Protection
-When a user explicitly deletes a memory, the application records the deletion so that the deleted information is not immediately recreated as an active memory.
-11. Long-Conversation Summarization
-The application monitors conversation size using tiktoken.
+
+Example:
+
+```text
+🧠 My Memories
+
+PROGRAMMING_LANGUAGE
+
+User prefers Java
+
+⭐ Importance: 8/10
+♾️ Permanent memory
+
+[ Edit ] [ Delete ]
+```
+
+---
+
+### 🗑️ 11. Deleted-Memory Protection
+
+When a user explicitly deletes a memory, the application records the deletion.
+
+This helps prevent the same deleted information from immediately being recreated as an active memory.
+
+---
+
+### 📝 12. Long-Conversation Summarization
+
+The application uses `tiktoken` to monitor conversation size.
+
 When the configured token threshold is exceeded:
-Older messages
+
+```text
+Older Messages
       ↓
-LLM summarization
+Token Threshold Exceeded
       ↓
-Important information retained
+LLM Summarization
       ↓
-Summary stored
+Important Information Preserved
       ↓
-Recent messages retained
+Summary Stored
+      ↓
+Recent Messages Retained
+```
+
 The summary preserves important:
+
 - Decisions
-- Goals
+- User goals
 - Context
 - Unresolved tasks
 - Preferences
-This reduces prompt size while preserving important conversation context.
-12. Persistent Storage
-Memories persist after restarting Flask because the application uses disk-backed:
+
+This reduces context size while preserving important information.
+
+---
+
+### 💾 13. Persistent Storage
+
+The application uses disk-backed:
+
+```text
 SQLite
 +
 ChromaDB
-The UI includes a Verify Persistence feature to demonstrate that stored memories survive a server restart.
-🏗️ System Architecture
+```
+
+Therefore memories survive a Flask server restart.
+
+The application also provides a:
+
+```text
+Verify Persistence
+```
+
+feature to demonstrate that stored memories remain available after restarting the server.
+
+---
+
+# 🏗️ System Architecture
+
+```text
                          USER
                            │
                            ▼
@@ -126,7 +291,7 @@ The UI includes a Verify Persistence feature to demonstrate that stored memories
               ┌────────────┴────────────┐
               │                         │
               ▼                         ▼
-       Save conversation          Memory Extraction
+       Save Conversation          Memory Extraction
                                       │
                                 ADD / UPDATE / IGNORE
                                       │
@@ -156,7 +321,7 @@ The UI includes a Verify Persistence feature to demonstrate that stored memories
                  ┌────────────────────┼─────────────────┐
                  │                    │                 │
                  ▼                    ▼                 ▼
-            Long-term            Summary          Recent Chat
+            Long-Term            Summary          Recent Chat
              Memory
                  │                    │                 │
                  └────────────────────┼─────────────────┘
@@ -175,7 +340,7 @@ The UI includes a Verify Persistence feature to demonstrate that stored memories
                                       │
                          ┌────────────┴────────────┐
                          │                         │
-                     Below limit              Above limit
+                     Below Limit              Above Limit
                          │                         │
                          │                         ▼
                          │                    Summarization
@@ -186,74 +351,69 @@ The UI includes a Verify Persistence feature to demonstrate that stored memories
                          └─────────────┬───────────┘
                                        ▼
                                   NEXT MESSAGE
-🔄 Memory Workflow
-New Memory
-User message
+```
+
+---
+
+# 🔄 Complete Memory Workflow
+
+## New Memory
+
+```text
+User Message
      ↓
-LLM memory extraction
+LLM Memory Extraction
      ↓
 ADD
      ↓
 SQLite
      ↓
-ChromaDB synchronization
-Updated Memory
-Existing memory
+ChromaDB Synchronization
+```
+
+## Updated Memory
+
+```text
+Existing Memory
      ↓
-User provides correction
+User Provides Correction
      ↓
-LLM identifies UPDATE
+LLM Identifies UPDATE
      ↓
-SQLite updated
+SQLite Updated
      ↓
-Conflicting old value removed
+Conflicting Old Value Removed
      ↓
-ChromaDB synchronized
+ChromaDB Synchronized
      ↓
-New value becomes authoritative
-Memory Query
-User question
+New Value Becomes Authoritative
+```
+
+## Memory Query
+
+```text
+User Question
      ↓
-Is this a memory-related query?
+Detect Memory Query
      ↓
-YES
+Identify Category
      ↓
-Find authoritative memory
+Retrieve Current Memory from SQLite
      ↓
-SQLite current value
-     ↓
-Ignore stale conflicting conversation information
+Ignore Stale Conflicting Information
      ↓
 Groq LLM
      ↓
-Answer
-🗄️ Data Storage
-SQLite
-SQLite acts as the structured source of truth.
-Conceptually, the database contains:
-users
-sessions
-messages
-memories
-summaries
-deleted_memories
-server_runs
-ChromaDB
-ChromaDB stores the semantic representation of memories and supports similarity-based retrieval.
-Memory records are associated with a user_id so that users cannot retrieve another user's memories.
-🔐 User Isolation
-Every authenticated user has a separate memory space.
-User A
- ├── Sessions
- └── Memories
+Final Answer
+```
 
-User B
- ├── Sessions
- └── Memories
-Memory retrieval is restricted to the authenticated user's ID.
-This prevents one user from receiving another user's stored memories.
-🧩 Context Construction
-For a normal chat request, the model receives a combination of:
+---
+
+# 🧩 Context Construction
+
+For a normal chat request, the LLM receives:
+
+```text
 System Instructions
         +
 Relevant Long-Term Memories
@@ -263,38 +423,138 @@ Conversation Summary
 Recent Conversation
         +
 Current User Message
+```
+
+Conceptually:
+
+```text
+┌─────────────────────────────┐
+│ System Instructions         │
+├─────────────────────────────┤
+│ Long-Term Memory            │
+├─────────────────────────────┤
+│ Conversation Summary        │
+├─────────────────────────────┤
+│ Recent Conversation         │
+├─────────────────────────────┤
+│ Current User Question       │
+└──────────────┬──────────────┘
+               ↓
+             Groq
+               ↓
+          AI Response
+```
+
 For direct memory questions, the current authoritative memory takes priority over stale conversation history.
-📝 Conversation Summarization
-The application uses tiktoken to monitor conversation token usage.
-When the configured threshold is exceeded, older messages are summarized.
-Large conversation
-       ↓
-Token counting
-       ↓
-Threshold exceeded
-       ↓
-Summarize older messages
-       ↓
-Store summary
-       ↓
-Keep recent messages
-       ↓
-Use summary + recent messages
-The goal is to reduce context size while retaining the important information from the earlier conversation.
-💻 Technology Stack
-Component	Technology	Purpose
-Frontend	HTML, CSS, JavaScript	User interface
-Backend	Flask	Web server and APIs
-LLM	Groq	AI response generation and memory processing
-Model	openai/gpt-oss-120b	Language model
-Vector Database	ChromaDB	Semantic memory retrieval
-Database	SQLite	Structured persistent storage
-Tokenization	tiktoken	Token counting
-Authentication	Flask Session + Werkzeug	Authentication and password hashing
-Configuration	python-dotenv	Environment variables
 
+---
 
-📁 Project Structure
+# 📝 Conversation Summarization Workflow
+
+The application monitors token usage using `tiktoken`.
+
+```text
+Conversation
+      ↓
+Token Counting
+      ↓
+Is Threshold Exceeded?
+      │
+   ┌──┴──┐
+   │     │
+  NO    YES
+   │     │
+   │     ▼
+   │  Summarize
+   │  Older Messages
+   │     │
+   │     ▼
+   │  Store Summary
+   │     │
+   │     ▼
+   │  Keep Recent
+   │  Messages
+   │
+   └───────────────→ Continue
+```
+
+The purpose is to prevent excessively large prompts while preserving important conversation context.
+
+---
+
+# 👥 Multi-User Memory Isolation
+
+Each authenticated user has an independent memory space.
+
+```text
+User A
+ ├── Chat Sessions
+ └── Memories
+
+User B
+ ├── Chat Sessions
+ └── Memories
+```
+
+Memory retrieval is restricted using the authenticated user's ID.
+
+Therefore:
+
+```text
+User A's memories
+        ≠
+User B's memories
+```
+
+This prevents one user from retrieving another user's information.
+
+---
+
+# 🗄️ Data Storage Architecture
+
+## SQLite
+
+SQLite acts as the structured source of truth.
+
+Conceptually:
+
+```text
+users
+sessions
+messages
+memories
+summaries
+deleted_memories
+server_runs
+```
+
+## ChromaDB
+
+ChromaDB stores the semantic representation of memories and supports similarity-based retrieval.
+
+Each memory is associated with a user so retrieval can be isolated per user.
+
+---
+
+# 💻 Technology Stack
+
+| Component | Technology | Purpose |
+|---|---|---|
+| Frontend | HTML, CSS, JavaScript | User interface |
+| Backend | Flask | Web server and REST APIs |
+| LLM API | Groq | AI response generation and memory processing |
+| LLM | `openai/gpt-oss-120b` | Language model |
+| Vector Database | ChromaDB | Semantic memory retrieval |
+| Database | SQLite | Structured persistent storage |
+| Tokenization | tiktoken | Token counting |
+| Authentication | Flask Session + Werkzeug | Authentication and password hashing |
+| Configuration | python-dotenv | Environment variables |
+
+---
+
+# 📁 Project Structure
+
+```text
 ai-memory-assistant/
 │
 ├── app.py
@@ -309,74 +569,216 @@ ai-memory-assistant/
 ├── memory.db
 │
 └── chroma_db/
-Important
-The following files/directories contain local runtime data and should not be committed to GitHub:
+```
+
+### Files that should NOT be committed
+
+```text
 .env
 memory.db
 chroma_db/
 __pycache__/
-⚙️ Installation
-1. Clone the repository
+```
+
+The `.env` file contains secrets and API keys.
+
+---
+
+# ⚙️ Installation
+
+## 1. Clone the Repository
+
+```bash
 git clone <YOUR_GITHUB_REPOSITORY_URL>
 cd ai-memory-assistant
-2. Create a virtual environment
-Windows
+```
+
+## 2. Create a Virtual Environment
+
+### Windows
+
+```bash
 python -m venv venv
 venv\Scripts\activate
-Linux / macOS
+```
+
+### Linux / macOS
+
+```bash
 python3 -m venv venv
 source venv/bin/activate
-3. Install dependencies
+```
+
+## 3. Install Dependencies
+
+```bash
 pip install -r requirements.txt
-🔑 Environment Variables
-Create a .env file:
+```
+
+---
+
+# 🔑 Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
 GROQ_API_KEY=your_groq_api_key
 FLASK_SECRET_KEY=your_secret_key
-Never commit your real .env file or API key to GitHub.
-A safe .env.example should contain placeholders:
+```
+
+Never commit the real `.env` file to GitHub.
+
+Use `.env.example` for sharing the required configuration format:
+
+```env
 GROQ_API_KEY=your_groq_api_key_here
 FLASK_SECRET_KEY=your_secret_key_here
-▶️ Run the Application
+```
+
+---
+
+# ▶️ Run the Application
+
+Start the Flask server:
+
+```bash
 python app.py
-Open:
+```
+
+Then open:
+
+```text
 http://127.0.0.1:5000
-🧪 Recommended Demo
-The following sequence demonstrates the major features.
-1. Register / Login
-Create a user account and login.
-2. Create a Memory
+```
+
+---
+
+# 🧪 Demo Workflow
+
+The following sequence demonstrates the major features of the application.
+
+## 1. Register / Login
+
+Create an account and login.
+
+---
+
+## 2. Create a Memory
+
 Send:
+
+```text
 My preferred programming language is Python.
-Show the memory appearing in My Memories.
-3. Update the Memory
+```
+
+The system should extract and display a memory similar to:
+
+```text
+PROGRAMMING_LANGUAGE
+User prefers Python
+```
+
+---
+
+## 3. Update the Memory
+
 Edit the memory:
+
+```text
 PROGRAMMING_LANGUAGE → Java
+```
+
 Then ask:
+
+```text
 What programming language do I prefer?
-The assistant should answer:
-Java
-This demonstrates memory correction and conflict resolution.
-4. Cross-Session Memory
-Create a new chat and ask about the preference again.
-The assistant can retrieve the long-term memory even though the question is being asked in a different chat session.
-5. User Isolation
-Create/login as another user and verify that the first user's memories are not visible.
-6. Summarization
+```
+
+Expected:
+
+```text
+Your preferred programming language is Java.
+```
+
+This demonstrates:
+
+- Memory editing
+- Memory conflict resolution
+- SQLite as source of truth
+- Protection against stale conversation history
+
+---
+
+## 4. Demonstrate Cross-Session Memory
+
+Create a new chat.
+
+Ask:
+
+```text
+What programming language do I prefer?
+```
+
+The system can retrieve the long-term memory even though the question is being asked in a different chat session.
+
+---
+
+## 5. Demonstrate User Isolation
+
+Logout and create another user.
+
+Verify that the new user cannot see the previous user's memories.
+
+---
+
+## 6. Demonstrate Summarization
+
 Generate a sufficiently long conversation to exceed the configured token threshold.
-Show:
-Conversation Summary
-and explain that older messages are summarized while recent context is retained.
-7. Persistence
+
+The application automatically:
+
+```text
+Detects token threshold
+        ↓
+Summarizes older messages
+        ↓
+Stores summary
+        ↓
+Retains recent messages
+```
+
+The generated summary is displayed in the conversation summary section.
+
+---
+
+## 7. Demonstrate Persistence
+
 Click:
+
+```text
 Verify Persistence
+```
+
 Then:
+
+```text
 Stop Flask
 Restart Flask
 Login again
-Verify that the memories are still available.
-🎯 Problem Statement
-Traditional conversational AI systems often have limited persistence across independent conversations. Important user preferences, goals, and context can be lost when a conversation ends.
+```
+
+Verify that the previously stored memories are still available.
+
+---
+
+# 🎯 Problem Statement
+
+Traditional conversational AI systems often have limited persistence across independent conversations.
+
+Important user preferences, goals, and context can be lost when a conversation ends.
+
 This project addresses that problem by creating an AI assistant capable of:
+
 - Persisting important user information
 - Retrieving relevant memories across conversations
 - Updating outdated memories
@@ -385,53 +787,85 @@ This project addresses that problem by creating an AI assistant capable of:
 - Summarizing long conversations
 - Maintaining isolated memory for different users
 - Persisting memory across server restarts
-💡 Key Design Decisions
-Why SQLite?
-SQLite provides a simple persistent relational database for structured application data and acts as the authoritative source for the current state of memories.
-Why ChromaDB?
-ChromaDB provides semantic retrieval, allowing the application to find memories based on meaning rather than only exact text matching.
-Why both SQLite and ChromaDB?
-They serve different purposes:
+
+---
+
+# 💡 Key Design Decisions
+
+### Why SQLite?
+
+SQLite provides persistent relational storage for structured application data and acts as the authoritative source for the current memory state.
+
+### Why ChromaDB?
+
+ChromaDB provides semantic retrieval, allowing the application to find relevant memories based on meaning rather than exact text matching.
+
+### Why Both SQLite and ChromaDB?
+
+They have different responsibilities:
+
+```text
 SQLite
 → What is the current truth?
 
 ChromaDB
 → Which memories are semantically relevant?
-Why an LLM?
-The LLM is used for:
+```
+
+### Why Groq?
+
+Groq provides the LLM inference layer used for:
+
 - Conversational responses
 - Memory extraction
 - Memory classification
 - Importance assessment
 - Conversation summarization
-Why token counting?
-Token counting allows the application to detect when a conversation is becoming too large and trigger summarization before context size becomes a problem.
-🔒 Security Considerations
+
+### Why Token Counting?
+
+Token counting allows the application to detect when a conversation is becoming too large and trigger summarization before the context becomes impractical.
+
+---
+
+# 🔐 Security Considerations
+
 - Passwords are hashed before storage.
-- Authentication is handled through Flask sessions.
-- API endpoints require authentication where appropriate.
+- Authentication is handled using Flask sessions.
+- Protected APIs require authentication.
 - Memories are associated with user IDs.
 - ChromaDB retrieval is filtered by user.
 - API keys are stored in environment variables.
 - Secrets are not included in frontend code.
-- .env should never be committed to source control.
-🚧 Current Limitations
-This project is designed as a functional prototype/demo. For production deployment, the following improvements could be considered:
+- `.env` should never be committed to GitHub.
+
+---
+
+# 🚧 Current Limitations
+
+This project is currently designed as a functional prototype/demo.
+
+For production deployment, the following improvements could be considered:
+
 - PostgreSQL instead of SQLite for higher concurrency
-- A production-grade vector database for larger-scale deployments
+- Production-grade vector database for large-scale deployments
 - Redis for caching and session management
 - Background workers for memory extraction and summarization
-- More sophisticated memory conflict resolution
+- More sophisticated contradiction detection
 - Stronger authorization and security controls
 - Rate limiting
-- API monitoring and logging
-- Automated tests
+- Automated testing
 - Production WSGI server
 - Containerized deployment
-- More granular memory categories and lifecycle policies
-🔮 Future Improvements
-Possible future extensions include:
-- User-configurable memory settings
+- Monitoring and logging
+- Cloud deployment
+
+---
+
+# 🔮 Future Improvements
+
+Possible future enhancements include:
+
 - Memory confidence scores
 - Memory history/versioning
 - Memory audit logs
@@ -442,9 +876,14 @@ Possible future extensions include:
 - Production cloud deployment
 - PostgreSQL + production vector database
 - Streaming LLM responses
-- Observability and analytics
-🏆 Project Highlights
-The key capabilities demonstrated by this project are:
+- User-configurable memory policies
+- Advanced observability and analytics
+
+---
+
+# 🏆 Project Highlights
+
+```text
 ✅ Multi-user authentication
 ✅ User-specific persistent memory
 ✅ Cross-session memory
@@ -453,13 +892,36 @@ The key capabilities demonstrated by this project are:
 ✅ Memory importance scoring
 ✅ Memory expiration
 ✅ Semantic retrieval with ChromaDB
-✅ SQLite source of truth
+✅ SQLite as source of truth
+✅ Memory conflict resolution
 ✅ Memory editing
 ✅ Memory deletion
 ✅ Deleted-memory protection
 ✅ Long-conversation summarization
 ✅ Token-aware context management
 ✅ Server-restart persistence
-✅ Memory isolation between users
-📌 One-Line Description
-An AI conversational assistant with persistent, user-specific, editable long-term memory, semantic retrieval, memory lifecycle management, and automatic long-conversation summarization.
+✅ User memory isolation
+```
+
+---
+
+# 📌 One-Line Description
+
+> **An AI conversational assistant with persistent, user-specific, editable long-term memory, semantic retrieval, memory lifecycle management, conflict resolution, and automatic long-conversation summarization.**
+
+---
+
+## 👩‍💻 Author
+
+**Jeevia Harshini M**
+
+AI & Data Science | Machine Learning | NLP | Generative AI | Python
+```
+
+**For GitHub:** copy the entire block into your `README.md`. You can then commit it with:
+
+```bash
+git add README.md
+git commit -m "Update README"
+git push
+```
