@@ -1,590 +1,300 @@
-# 🧠 AI Memory Assistant
+🧠 AI Memory Assistant
+An AI-powered conversational assistant that provides persistent, user-specific long-term memory across independent chat sessions.
+Unlike a conventional chatbot that mainly relies on the current conversation, this application can identify important facts from user conversations, store them as memories, retrieve relevant memories in future conversations, update outdated information, summarize long conversations, and give users control over what the system remembers.
+🚀 Key Features
+1. User Authentication
+- User registration and login
+- Secure password hashing using Werkzeug
+- Flask session-based authentication
+- Logout support
+- Separate memory space for every user
+2. Multi-Session Chat
+- Create multiple independent chat sessions
+- Store messages for each session
+- Reopen previous conversations
+- Long-term memories are shared across sessions for the same user
+3. Automatic Long-Term Memory
+The system uses the LLM to identify information worth remembering from conversations.
+Example:
+"My preferred programming language is Python."
 
-An AI-powered full-stack chat assistant that remembers important facts about users across sessions and allows users to view, edit, and delete what the assistant remembers.
+The system can create:
+Category: PROGRAMMING_LANGUAGE
+Fact: User prefers Python
+Importance: 8/10
+4. Memory Actions: ADD / UPDATE / IGNORE
+The memory extraction system can decide whether to:
+- ADD a new memory
+- UPDATE an existing memory
+- IGNORE information that is not useful as long-term memory
+Example:
+Previous:
+PROGRAMMING_LANGUAGE → Python
 
-The application combines **Flask, Groq LLM, SQLite, ChromaDB, and JavaScript** to implement persistent user memory, semantic retrieval, conversation summarization, and user-controlled memory management.
+User correction:
+"I now prefer Java."
 
----
-
-## 🚀 Features
-
-- 🧠 Persistent user memory across sessions
-- 🔍 Semantic memory retrieval using ChromaDB
-- 🔄 Automatic memory conflict detection and updating
-- ➕ Automatic extraction of lasting user facts
-- 📝 Conversation summarization when token limits are exceeded
-- 👁️ View stored memories
-- ✏️ Edit stored memories
-- 🗑️ Delete stored memories
-- 🔐 Deleted-memory protection using tombstones
-- 💬 Context-aware AI responses
-- 🗄️ SQLite-based persistent storage
-- 🌐 Full-stack web interface
-
----
-
-## 📌 Problem Statement
-
-Build an AI chat assistant that:
-
-1. Extracts lasting facts about the user after every conversation turn.
-2. Stores those facts using a structured database and a vector database.
-3. Updates conflicting facts instead of creating duplicate memories.
-4. Retrieves relevant memories for every new user message.
-5. Automatically summarizes older conversation history when the token limit is exceeded.
-6. Provides a memory panel where users can view, edit, and delete stored memories.
-7. Prevents explicitly deleted memories from being automatically stored again.
-
----
-
-## 🏗️ Architecture
-
-```text
-                         ┌───────────────────┐
-                         │       USER        │
-                         └─────────┬─────────┘
-                                   │
-                                   ▼
-                         ┌───────────────────┐
-                         │   HTML / CSS / JS │
-                         │     Frontend      │
-                         └─────────┬─────────┘
-                                   │
-                                   ▼
-                         ┌───────────────────┐
-                         │      Flask        │
-                         │     Backend       │
-                         └─────────┬─────────┘
-                                   │
-                 ┌─────────────────┼─────────────────┐
-                 │                 │                 │
-                 ▼                 ▼                 ▼
-          ┌─────────────┐   ┌─────────────┐   ┌─────────────┐
-          │   SQLite    │   │  ChromaDB   │   │    Groq     │
-          │             │   │             │   │     LLM     │
-          │ Memories    │   │ Embeddings  │   │             │
-          │ Messages    │   │ Similarity  │   │ Chat        │
-          │ Summaries   │   │ Search      │   │ Extraction  │
-          │ Deletions   │   │             │   │ Summarizing |
-          └─────────────┘   └─────────────┘   └─────────────┘
-
-Absolutely — here is a **single, clean, professional README** you can copy directly into `README.md`.
-
-```markdown
-# 🧠 AI Memory Assistant
-
-An AI-powered full-stack chat assistant that remembers important facts about users across sessions and allows users to view, edit, and delete what the assistant remembers.
-
-The application combines **Flask, Groq LLM, SQLite, ChromaDB, and JavaScript** to implement persistent user memory, semantic retrieval, conversation summarization, and user-controlled memory management.
-
----
-
-## 🚀 Features
-
-- 🧠 Persistent user memory across sessions
-- 🔍 Semantic memory retrieval using ChromaDB
-- 🔄 Automatic memory conflict detection and updating
-- ➕ Automatic extraction of lasting user facts
-- 📝 Conversation summarization when token limits are exceeded
-- 👁️ View stored memories
-- ✏️ Edit stored memories
-- 🗑️ Delete stored memories
-- 🔐 Deleted-memory protection using tombstones
-- 💬 Context-aware AI responses
-- 🗄️ SQLite-based persistent storage
-- 🌐 Full-stack web interface
-
----
-
-## 📌 Problem Statement
-
-Build an AI chat assistant that:
-
-1. Extracts lasting facts about the user after every conversation turn.
-2. Stores those facts using a structured database and a vector database.
-3. Updates conflicting facts instead of creating duplicate memories.
-4. Retrieves relevant memories for every new user message.
-5. Automatically summarizes older conversation history when the token limit is exceeded.
-6. Provides a memory panel where users can view, edit, and delete stored memories.
-7. Prevents explicitly deleted memories from being automatically stored again.
-
----
-
-## 🏗️ Architecture
-
-```text
-                         ┌───────────────────┐
-                         │       USER        │
-                         └─────────┬─────────┘
-                                   │
-                                   ▼
-                         ┌───────────────────┐
-                         │   HTML / CSS / JS │
-                         │     Frontend      │
-                         └─────────┬─────────┘
-                                   │
-                                   ▼
-                         ┌───────────────────┐
-                         │      Flask        │
-                         │     Backend       │
-                         └─────────┬─────────┘
-                                   │
-                 ┌─────────────────┼─────────────────┐
-                 │                 │                 │
-                 ▼                 ▼                 ▼
-          ┌─────────────┐   ┌─────────────┐   ┌─────────────┐
-          │   SQLite    │   │  ChromaDB   │   │    Groq     │
-          │             │   │             │   │     LLM     │
-          │ Memories    │   │ Embeddings  │   │             │
-          │ Messages    │   │ Similarity  │   │ Chat        │
-          │ Summaries   │   │ Search      │   │ Extraction  │
-          │ Deletions   │   │             │   │ Summarizing │
-          └─────────────┘   └─────────────┘   └─────────────┘
-```
-
-### Component Responsibilities
-
-| Component | Purpose |
-|---|---|
-| **HTML/CSS/JavaScript** | Chat UI and memory management panel |
-| **Flask** | Backend API and application logic |
-| **Groq LLM** | Chat generation, memory extraction, summarization |
-| **SQLite** | Structured persistent storage |
-| **ChromaDB** | Vector storage and semantic retrieval |
-| **tiktoken** | Token counting |
-| **python-dotenv** | Environment variable management |
-
----
-
-## 🔄 Application Workflow
-
-```text
-                    USER MESSAGE
-                         │
-                         ▼
-                  Save Message
-                         │
-                         ▼
-             Extract Lasting Facts
-                         │
-                         ▼
-                  ADD / UPDATE /
-                     IGNORE
-                         │
-                         ▼
-              Check Deleted Memories
-                         │
-                         ▼
-                SQLite + ChromaDB
-                         │
-                         ▼
-              Retrieve Relevant Memory
-                         │
-                         ▼
-              Retrieve Conversation
-                    Summary
-                         │
-                         ▼
-               Retrieve Recent
-                   Messages
-                         │
-                         ▼
-                 Build LLM Prompt
-                         │
-                         ▼
-                    Groq LLM
-                         │
-                         ▼
-                  AI Response
-                         │
-                         ▼
-                 Save Response
-                         │
-                         ▼
-                Check Token Limit
-                         │
-              ┌──────────┴──────────┐
-              │                     │
-          Within Limit          Exceeded
-              │                     │
-              │                     ▼
-              │              Summarize Older
-              │                 Messages
-              │                     │
-              └──────────┬──────────┘
-                         ▼
-                       DONE
-```
-
----
-
-## 🧠 Persistent Memory
-
-After every user message, the system uses the LLM to identify lasting user-specific facts.
-
+Result:
+PROGRAMMING_LANGUAGE → Java
+The latest corrected value becomes authoritative.
+5. Memory Importance and Expiration
+Every memory receives an importance score from 1–10.
+The application uses importance to determine memory retention.
+1–3   → short retention
+4–5   → medium retention
+6–7   → long retention
+8–10  → permanent
+Expired memories are removed from the active memory stores.
+6. Semantic Memory Retrieval
+ChromaDB is used as the semantic retrieval layer.
+This allows the application to retrieve memories based on meaning rather than exact keyword matching.
+For example, a stored memory:
+User prefers Java.
+can be relevant to:
+"What programming language am I most comfortable with?"
+7. SQLite as Source of Truth
+SQLite stores structured application data including:
+- Users
+- Chat sessions
+- Messages
+- Memories
+- Conversation summaries
+- Deleted-memory records
+- Server-run information
+SQLite is treated as the authoritative source of the current memory state.
+ChromaDB is used primarily for semantic retrieval.
+8. Memory Conflict Resolution
+The application handles outdated memories.
 For example:
+Old conversation:
+"I prefer Python."
 
-```text
-User:
-I prefer Python for programming.
-```
-
-The memory extraction layer produces:
-
-```text
-Category:
-programming_language
-
-Fact:
-The user prefers Python.
-```
-
-The fact is then stored in SQLite and indexed in ChromaDB.
-
-### Information suitable for memory
-
-```text
-I prefer Python.
-I'm preparing for GATE.
-I prefer backend development.
-I'm interested in artificial intelligence.
-```
-
-### Information that should not normally become memory
-
-```text
-What is machine learning?
-Explain Python loops.
-What is a SQL JOIN?
-```
-
-The goal is to store **lasting user information**, not every conversation message.
-
----
-
-## 🔄 Memory Conflict Resolution
-
-The system prevents duplicate conflicting memories.
-
-Example:
-
-```text
-User:
-I prefer Python.
-
-Stored:
-programming_language → Python
-```
-
-Later:
-
-```text
-User:
-Actually, I prefer Java now.
-```
-
-The system updates the existing memory:
-
-```text
-programming_language → Java
-```
-
-instead of storing:
-
-```text
-Python
-Java
-```
-
-The memory extraction process classifies candidate memories as:
-
-```text
+Current memory:
+PROGRAMMING_LANGUAGE → Java
+For a memory query such as:
+"What programming language do I prefer?"
+the current memory is treated as authoritative rather than allowing stale conversation history to override it.
+9. User-Controlled Memory
+The memory panel allows users to:
+- View memories
+- Edit memories
+- Delete memories
+- View importance
+- View expiration information
+10. Deleted-Memory Protection
+When a user explicitly deletes a memory, the application records the deletion so that the deleted information is not immediately recreated as an active memory.
+11. Long-Conversation Summarization
+The application monitors conversation size using tiktoken.
+When the configured token threshold is exceeded:
+Older messages
+      ↓
+LLM summarization
+      ↓
+Important information retained
+      ↓
+Summary stored
+      ↓
+Recent messages retained
+The summary preserves important:
+- Decisions
+- Goals
+- Context
+- Unresolved tasks
+- Preferences
+This reduces prompt size while preserving important conversation context.
+12. Persistent Storage
+Memories persist after restarting Flask because the application uses disk-backed:
+SQLite
++
+ChromaDB
+The UI includes a Verify Persistence feature to demonstrate that stored memories survive a server restart.
+🏗️ System Architecture
+                         USER
+                           │
+                           ▼
+                  LOGIN / REGISTER
+                           │
+                           ▼
+                    AUTHENTICATION
+                           │
+                           ▼
+                     CHAT SESSION
+                           │
+                           ▼
+                    USER MESSAGE
+                           │
+              ┌────────────┴────────────┐
+              │                         │
+              ▼                         ▼
+       Save conversation          Memory Extraction
+                                      │
+                                ADD / UPDATE / IGNORE
+                                      │
+                                      ▼
+                              Importance + Expiry
+                                      │
+                                      ▼
+                               ┌─────────────┐
+                               │   SQLite    │
+                               │ Source of   │
+                               │   Truth     │
+                               └──────┬──────┘
+                                      │
+                                      ▼
+                               ┌─────────────┐
+                               │  ChromaDB   │
+                               │  Semantic   │
+                               │  Retrieval  │
+                               └──────┬──────┘
+                                      │
+                                      ▼
+                              RELEVANT MEMORY
+                                      │
+                                      ▼
+                           CONTEXT ASSEMBLY
+                                      │
+                 ┌────────────────────┼─────────────────┐
+                 │                    │                 │
+                 ▼                    ▼                 ▼
+            Long-term            Summary          Recent Chat
+             Memory
+                 │                    │                 │
+                 └────────────────────┼─────────────────┘
+                                      │
+                                      ▼
+                                  GROQ LLM
+                                      │
+                                      ▼
+                                 AI RESPONSE
+                                      │
+                                      ▼
+                              Save Response
+                                      │
+                                      ▼
+                              Token Monitoring
+                                      │
+                         ┌────────────┴────────────┐
+                         │                         │
+                     Below limit              Above limit
+                         │                         │
+                         │                         ▼
+                         │                    Summarization
+                         │                         │
+                         │                         ▼
+                         │                   Store Summary
+                         │
+                         └─────────────┬───────────┘
+                                       ▼
+                                  NEXT MESSAGE
+🔄 Memory Workflow
+New Memory
+User message
+     ↓
+LLM memory extraction
+     ↓
 ADD
-UPDATE
-IGNORE
-```
-
----
-
-## 🔎 Semantic Memory Retrieval
-
-ChromaDB is used to retrieve memories that are semantically relevant to the current message.
-
-```text
-User Query
-     │
-     ▼
-ChromaDB Similarity Search
-     │
-     ▼
-Relevant Memories
-     │
-     ▼
-LLM Context
-     │
-     ▼
-AI Response
-```
-
-For example, the stored memory may be:
-
-```text
-The user prefers backend development.
-```
-
-The user can ask:
-
-```text
-What type of development should I focus on?
-```
-
-The system can retrieve the relevant memory even when the wording is different.
-
-This allows the assistant to follow the principle:
-
-> **Store persistent facts, but retrieve only what is relevant.**
-
----
-
-## 💬 Cross-Session Memory
-
-Memories are persisted using SQLite and ChromaDB rather than being kept only in application memory.
-
-Therefore, after restarting the Flask application, previously stored memories can still be retrieved.
-
-Example:
-
-```text
-Session 1:
-User → I prefer Java.
-
-        ↓
-
-Memory stored
-
-        ↓
-
-Application restarted
-
-        ↓
-
-Session 2:
-User → What programming language do I prefer?
-
-AI → You prefer Java.
-```
-
----
-
-## 📝 Conversation Summarization
-
-Conversation history grows as the user continues chatting.
-
-To prevent the LLM context from becoming unnecessarily large, the application monitors the token count.
-
-```text
-Conversation History
-        │
-        ▼
-   Token Counting
-        │
-        ▼
-Token Limit Exceeded?
-       /       \
-     No         Yes
-     │           │
-     │           ▼
-     │      Summarize Older
-     │       Conversation
-     │           │
-     │           ▼
-     │        SQLite
-     │
-     └───────────┘
-```
-
-The application retains recent messages while older messages are compressed into a summary.
-
-### Memory vs Summary
-
-| Persistent Memory | Conversation Summary |
-|---|---|
-| Long-term user fact | Compressed conversation context |
-| User preference, goal, etc. | Important points from older messages |
-| User can edit/delete | Automatically generated |
-| Stored independently | Used for context management |
-
----
-
-## 🎛️ Memory Management Panel
-
-The application provides a dedicated memory panel.
-
-Users can:
-
-### View
-
-See what the assistant currently remembers.
-
-### Edit
-
-Modify an existing memory.
-
-### Delete
-
-Remove an existing memory.
-
-Example:
-
-```text
-┌──────────────────────────────────┐
-│        🧠 My Memories            │
-├──────────────────────────────────┤
-│                                  │
-│ programming_language             │
-│ The user prefers Java.           │
-│                                  │
-│ [Edit]        [Delete]           │
-│                                  │
-├──────────────────────────────────┤
-│                                  │
-│ interest                         │
-│ The user is interested in AI.    │
-│                                  │
-│ [Edit]        [Delete]           │
-│                                  │
-└──────────────────────────────────┘
-```
-
----
-
-## 🗑️ Deleted Memory Protection
-
-Deleting a memory does more than remove it from the UI.
-
-The system:
-
-```text
-User Deletes Memory
-        │
-        ├── Remove active SQLite record
-        │
-        ├── Remove ChromaDB vector
-        │
-        └── Store deletion tombstone
-```
-
-The deletion record allows the application to recognize that the user intentionally removed the information.
-
-When a future memory candidate is extracted:
-
-```text
-New Candidate Memory
-        │
-        ▼
-Previously Deleted?
-      /     \
-    YES      NO
-     │        │
-   BLOCK     STORE
-```
-
-This helps prevent a deleted fact from being automatically recreated.
-
----
-
-# 🗄️ Data Storage
-
-## SQLite
-
-SQLite acts as the **structured source of truth**.
-
-### `memories`
-
-Stores active user memories.
-
-```text
-id
-category
-fact
-created_at
-updated_at
-```
-
-### `messages`
-
-Stores conversation history.
-
-```text
-id
-role
-content
-created_at
-```
-
-### `summaries`
-
-Stores summaries of older conversations.
-
-```text
-id
-summary
-created_at
-```
-
-### `deleted_memories`
-
-Stores deletion tombstones.
-
-```text
-id
-category
-fact
-fact_hash
-deleted_at
-```
-
----
-
-## ChromaDB
-
-ChromaDB acts as the **semantic retrieval layer**.
-
-It is used for:
-
-- Memory embeddings
-- Similarity search
-- Relevant memory retrieval
-
-### Why use SQLite and ChromaDB together?
-
-They have different responsibilities.
-
-**SQLite provides:**
-
-- Structured persistence
-- CRUD operations
-- IDs
-- Timestamps
-- Conversation history
-- Summaries
-- Deletion records
-
-**ChromaDB provides:**
-
-- Vector embeddings
-- Semantic search
-- Relevant memory retrieval
-
-Therefore:
-
-> **SQLite is the structured source of truth, while ChromaDB is the semantic retrieval layer.**
-
----
-
-# 📁 Project Structure
-
-```text
+     ↓
+SQLite
+     ↓
+ChromaDB synchronization
+Updated Memory
+Existing memory
+     ↓
+User provides correction
+     ↓
+LLM identifies UPDATE
+     ↓
+SQLite updated
+     ↓
+Conflicting old value removed
+     ↓
+ChromaDB synchronized
+     ↓
+New value becomes authoritative
+Memory Query
+User question
+     ↓
+Is this a memory-related query?
+     ↓
+YES
+     ↓
+Find authoritative memory
+     ↓
+SQLite current value
+     ↓
+Ignore stale conflicting conversation information
+     ↓
+Groq LLM
+     ↓
+Answer
+🗄️ Data Storage
+SQLite
+SQLite acts as the structured source of truth.
+Conceptually, the database contains:
+users
+sessions
+messages
+memories
+summaries
+deleted_memories
+server_runs
+ChromaDB
+ChromaDB stores the semantic representation of memories and supports similarity-based retrieval.
+Memory records are associated with a user_id so that users cannot retrieve another user's memories.
+🔐 User Isolation
+Every authenticated user has a separate memory space.
+User A
+ ├── Sessions
+ └── Memories
+
+User B
+ ├── Sessions
+ └── Memories
+Memory retrieval is restricted to the authenticated user's ID.
+This prevents one user from receiving another user's stored memories.
+🧩 Context Construction
+For a normal chat request, the model receives a combination of:
+System Instructions
+        +
+Relevant Long-Term Memories
+        +
+Conversation Summary
+        +
+Recent Conversation
+        +
+Current User Message
+For direct memory questions, the current authoritative memory takes priority over stale conversation history.
+📝 Conversation Summarization
+The application uses tiktoken to monitor conversation token usage.
+When the configured threshold is exceeded, older messages are summarized.
+Large conversation
+       ↓
+Token counting
+       ↓
+Threshold exceeded
+       ↓
+Summarize older messages
+       ↓
+Store summary
+       ↓
+Keep recent messages
+       ↓
+Use summary + recent messages
+The goal is to reduce context size while retaining the important information from the earlier conversation.
+💻 Technology Stack
+Component	Technology	Purpose
+Frontend	HTML, CSS, JavaScript	User interface
+Backend	Flask	Web server and APIs
+LLM	Groq	AI response generation and memory processing
+Model	openai/gpt-oss-120b	Language model
+Vector Database	ChromaDB	Semantic memory retrieval
+Database	SQLite	Structured persistent storage
+Tokenization	tiktoken	Token counting
+Authentication	Flask Session + Werkzeug	Authentication and password hashing
+Configuration	python-dotenv	Environment variables
+
+
+📁 Project Structure
 ai-memory-assistant/
 │
 ├── app.py
@@ -596,321 +306,160 @@ ai-memory-assistant/
 ├── templates/
 │   └── index.html
 │
-└── screenshots/
-    └── demo.png
-```
-
-Runtime files are intentionally excluded from Git:
-
-```text
+├── memory.db
+│
+└── chroma_db/
+Important
+The following files/directories contain local runtime data and should not be committed to GitHub:
 .env
 memory.db
 chroma_db/
 __pycache__/
-```
-
----
-
-# ⚙️ Installation
-
-## Prerequisites
-
-- Python 3.10+
-- Git
-- Groq API key
-
----
-
-## 1. Clone the Repository
-
-```bash
-git clone https://github.com/jeevia22/ai-memory-assistant.git
-```
-
-```bash
+⚙️ Installation
+1. Clone the repository
+git clone <YOUR_GITHUB_REPOSITORY_URL>
 cd ai-memory-assistant
-```
-
----
-
-## 2. Create a Virtual Environment
-
-### Windows
-
-```bash
+2. Create a virtual environment
+Windows
 python -m venv venv
-```
-
-```bash
 venv\Scripts\activate
-```
-
-### Linux / macOS
-
-```bash
+Linux / macOS
 python3 -m venv venv
-```
-
-```bash
 source venv/bin/activate
-```
-
----
-
-## 3. Install Dependencies
-
-```bash
+3. Install dependencies
 pip install -r requirements.txt
-```
-
----
-
-## 4. Configure the API Key
-
-Create a `.env` file:
-
-```env
+🔑 Environment Variables
+Create a .env file:
+GROQ_API_KEY=your_groq_api_key
+FLASK_SECRET_KEY=your_secret_key
+Never commit your real .env file or API key to GitHub.
+A safe .env.example should contain placeholders:
 GROQ_API_KEY=your_groq_api_key_here
-```
-
-> **Never commit your `.env` file or expose your API key publicly.**
-
-The repository contains `.env.example` only as a configuration template.
-
----
-
-## 5. Run the Application
-
-```bash
+FLASK_SECRET_KEY=your_secret_key_here
+▶️ Run the Application
 python app.py
-```
-
 Open:
-
-```text
 http://127.0.0.1:5000
-```
-
----
-
-# 🧪 Testing
-
-### Test 1 — Add Memory
-
+🧪 Recommended Demo
+The following sequence demonstrates the major features.
+1. Register / Login
+Create a user account and login.
+2. Create a Memory
 Send:
-
-```text
-I prefer Python for programming.
-```
-
-Expected:
-
-```text
-programming_language
-The user prefers Python.
-```
-
----
-
-### Test 2 — Update Memory
-
-Send:
-
-```text
-Actually, I prefer Java now.
-```
-
-Expected:
-
-```text
-programming_language
-The user prefers Java.
-```
-
-The old Python preference should not remain as an active duplicate.
-
----
-
-### Test 3 — Retrieve Memory
-
-Ask:
-
-```text
-Which programming language do I prefer?
-```
-
-The assistant should respond using the stored memory.
-
----
-
-### Test 4 — Cross-Session Persistence
-
-Restart the Flask application and ask:
-
-```text
-Which programming language do I prefer?
-```
-
-The previously stored memory should still be available.
-
----
-
-### Test 5 — Edit Memory
-
-Use the **Edit** button in the memory panel.
-
-Modify an existing fact and refresh the application.
-
-The updated value should persist.
-
----
-
-### Test 6 — Delete Memory
-
-Use the **Delete** button.
-
-The memory should disappear from the active memory panel.
-
----
-
-### Test 7 — Deleted Memory Protection
-
-After deleting a memory, provide the same fact again.
-
-The application should prevent the previously deleted fact from being automatically recreated as persistent memory.
-
----
-
-### Test 8 — Conversation Summarization
-
-Temporarily lower the token limit and conduct a longer conversation.
-
-When the token limit is exceeded, older conversation messages should be summarized and stored in SQLite.
-
----
-
-# 📸 Demo
-
-Add a screenshot of the running application:
-
-```markdown
-![AI Memory Assistant](screenshots/demo.png)
-```
-
-The interface demonstrates:
-
-- AI chat
-- Persistent memory
-- Memory retrieval
-- Memory editing
-- Memory deletion
-
----
-
-# 🎯 Requirements Mapping
-
-| Requirement | Implementation |
-|---|---|
-| Extract lasting facts | Groq LLM memory extraction |
-| Store memories | SQLite + ChromaDB |
-| Update conflicting facts | ADD / UPDATE / IGNORE logic |
-| Retrieve relevant memories | ChromaDB semantic search |
-| Summarize long conversations | Groq + tiktoken |
-| View memories | Memory panel |
-| Edit memories | Flask PUT API |
-| Delete memories | Flask DELETE API |
-| Prevent deleted memory re-storage | Deleted-memory tombstones |
-
----
-
-# ⚠️ Limitations
-
-This project is implemented as a functional prototype.
-
-Current limitations include:
-
-- SQLite is suitable for local development but not ideal for large-scale concurrent workloads.
-- Memory extraction depends on LLM output quality.
-- Semantic retrieval requires suitable similarity thresholds.
-- Deleted-memory matching can be improved with stronger semantic similarity checks.
-- Authentication and authorization are not implemented.
-- The current implementation is primarily designed for a local/single-user environment.
-- LLM-generated memory extraction should be further validated before production deployment.
-
----
-
-# 🚀 Future Improvements
-
-Potential production improvements include:
-
-- User authentication and authorization
-- Multi-user support
-- PostgreSQL for scalable structured storage
-- pgvector or a managed vector database
-- Structured JSON schema validation
-- Memory confidence scoring
-- Improved semantic duplicate detection
-- Improved deleted-memory matching
-- Encryption of sensitive user data
-- API rate limiting
-- Docker containerization
-- Cloud deployment
-- Automated unit and integration tests
-- Logging and monitoring
-- API versioning
-
----
-
-# 🔑 Key Concepts Demonstrated
-
-This project demonstrates practical implementation of:
-
-- Large Language Models (LLMs)
-- Prompt Engineering
-- Persistent AI Memory
-- Vector Databases
-- Semantic Search
-- Retrieval-Augmented Generation concepts
-- Conversation Summarization
-- Token Management
-- REST APIs
-- Flask Backend Development
-- SQLite Database Management
-- CRUD Operations
-- Full-Stack Development
-- Memory Conflict Resolution
-- User-Controlled AI Memory
-- Data Deletion and Tombstones
-
----
-
-# 👩‍💻 Author
-
-**Jeevia Harshini M**
-
-AI & Data Science
-
-GitHub: [@jeevia22](https://github.com/jeevia22)
-
----
-
-## ⭐ Project Summary
-
-The **AI Memory Assistant** combines:
-
-```text
-LLM
-+
-Persistent Memory
-+
-Semantic Retrieval
-+
-Conversation Summarization
-+
-User-Controlled Memory
-```
-
-to create a personalized conversational AI system where users can **see, modify, and control what the assistant remembers**.
-```
-
-**Before committing:** make sure `.env.example` contains only `GROQ_API_KEY=your_groq_api_key_here` and never your real `gsk_...` key. Also keep `.env`, `memory.db`, and `chroma_db/` excluded through `.gitignore`.
+My preferred programming language is Python.
+Show the memory appearing in My Memories.
+3. Update the Memory
+Edit the memory:
+PROGRAMMING_LANGUAGE → Java
+Then ask:
+What programming language do I prefer?
+The assistant should answer:
+Java
+This demonstrates memory correction and conflict resolution.
+4. Cross-Session Memory
+Create a new chat and ask about the preference again.
+The assistant can retrieve the long-term memory even though the question is being asked in a different chat session.
+5. User Isolation
+Create/login as another user and verify that the first user's memories are not visible.
+6. Summarization
+Generate a sufficiently long conversation to exceed the configured token threshold.
+Show:
+Conversation Summary
+and explain that older messages are summarized while recent context is retained.
+7. Persistence
+Click:
+Verify Persistence
+Then:
+Stop Flask
+Restart Flask
+Login again
+Verify that the memories are still available.
+🎯 Problem Statement
+Traditional conversational AI systems often have limited persistence across independent conversations. Important user preferences, goals, and context can be lost when a conversation ends.
+This project addresses that problem by creating an AI assistant capable of:
+- Persisting important user information
+- Retrieving relevant memories across conversations
+- Updating outdated memories
+- Managing memory importance and expiration
+- Allowing users to edit and delete memories
+- Summarizing long conversations
+- Maintaining isolated memory for different users
+- Persisting memory across server restarts
+💡 Key Design Decisions
+Why SQLite?
+SQLite provides a simple persistent relational database for structured application data and acts as the authoritative source for the current state of memories.
+Why ChromaDB?
+ChromaDB provides semantic retrieval, allowing the application to find memories based on meaning rather than only exact text matching.
+Why both SQLite and ChromaDB?
+They serve different purposes:
+SQLite
+→ What is the current truth?
+
+ChromaDB
+→ Which memories are semantically relevant?
+Why an LLM?
+The LLM is used for:
+- Conversational responses
+- Memory extraction
+- Memory classification
+- Importance assessment
+- Conversation summarization
+Why token counting?
+Token counting allows the application to detect when a conversation is becoming too large and trigger summarization before context size becomes a problem.
+🔒 Security Considerations
+- Passwords are hashed before storage.
+- Authentication is handled through Flask sessions.
+- API endpoints require authentication where appropriate.
+- Memories are associated with user IDs.
+- ChromaDB retrieval is filtered by user.
+- API keys are stored in environment variables.
+- Secrets are not included in frontend code.
+- .env should never be committed to source control.
+🚧 Current Limitations
+This project is designed as a functional prototype/demo. For production deployment, the following improvements could be considered:
+- PostgreSQL instead of SQLite for higher concurrency
+- A production-grade vector database for larger-scale deployments
+- Redis for caching and session management
+- Background workers for memory extraction and summarization
+- More sophisticated memory conflict resolution
+- Stronger authorization and security controls
+- Rate limiting
+- API monitoring and logging
+- Automated tests
+- Production WSGI server
+- Containerized deployment
+- More granular memory categories and lifecycle policies
+🔮 Future Improvements
+Possible future extensions include:
+- User-configurable memory settings
+- Memory confidence scores
+- Memory history/versioning
+- Memory audit logs
+- More advanced contradiction detection
+- Hybrid keyword + semantic retrieval
+- Reranking retrieved memories
+- Background memory processing
+- Production cloud deployment
+- PostgreSQL + production vector database
+- Streaming LLM responses
+- Observability and analytics
+🏆 Project Highlights
+The key capabilities demonstrated by this project are:
+✅ Multi-user authentication
+✅ User-specific persistent memory
+✅ Cross-session memory
+✅ Automatic memory extraction
+✅ ADD / UPDATE / IGNORE memory actions
+✅ Memory importance scoring
+✅ Memory expiration
+✅ Semantic retrieval with ChromaDB
+✅ SQLite source of truth
+✅ Memory editing
+✅ Memory deletion
+✅ Deleted-memory protection
+✅ Long-conversation summarization
+✅ Token-aware context management
+✅ Server-restart persistence
+✅ Memory isolation between users
+📌 One-Line Description
+An AI conversational assistant with persistent, user-specific, editable long-term memory, semantic retrieval, memory lifecycle management, and automatic long-conversation summarization.
