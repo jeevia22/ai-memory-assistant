@@ -1,4 +1,4 @@
-Absolutely — here is the **GitHub-ready `README.md` content** in Markdown code format. You can copy everything inside the code block directly into your `README.md`.
+
 
 ```markdown
 # 🧠 AI Memory Assistant
@@ -918,7 +918,7 @@ Possible future enhancements include:
 AI & Data Science | Machine Learning | NLP | Generative AI | Python
 ```
 
-**For GitHub:** copy the entire block into your `README.md`. You can then commit it with:
+
 
 ```bash
 git add README.md
