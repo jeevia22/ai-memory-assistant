@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>AI Memory Assistant</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* CHAT */
+
+        .chat-section {
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #ddd;
+        }
+
+        .header {
+            padding: 20px;
+            background: white;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .header h2 {
+            margin: 0;
+        }
+
+        #chat {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .message {
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            max-width: 75%;
+            line-height: 1.5;
+        }
+
+        .user {
+            background: #dbeafe;
+            margin-left: auto;
+        }
+
+        .assistant {
+            background: white;
+            border: 1px solid #ddd;
+        }
+
+        .input-area {
+            padding: 15px;
+            background: white;
+            display: flex;
+            gap: 10px;
+        }
+
+        #message {
+            flex: 1;
+            padding: 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        button {
+            border: none;
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+        }
+
+        /* MEMORY PANEL */
+
+        .memory-panel {
+            width: 30%;
+            padding: 20px;
+            background: white;
+            overflow-y: auto;
+        }
+
+        .memory {
+            border: 1px solid #ddd;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .category {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .fact {
+            margin-bottom: 10px;
+        }
+
+        .memory button {
+            margin-right: 5px;
+            background: #555;
+            padding: 7px 10px;
+        }
+
+        .memory button.delete {
+            background: #dc2626;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <!-- CHAT -->
+
+    <div class="chat-section">
+
+        <div class="header">
+
+            <h2>🤖 AI Memory Assistant</h2>
+
+            <p>
+                Chat with an assistant that remembers important facts about you.
+            </p>
+
+        </div>
+
+        <div id="chat"></div>
+
+        <div class="input-area">
+
+            <input
+                id="message"
+                placeholder="Type your message..."
+                onkeydown="handleKey(event)"
+            >
+
+            <button onclick="sendMessage()">
+                Send
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- MEMORY PANEL -->
+
+    <div class="memory-panel">
+
+        <h2>🧠 My Memories</h2>
+
+        <p>
+            View and control what the AI remembers.
+        </p>
+
+        <div id="memories"></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+// ============================================================
+// SEND MESSAGE
+// ============================================================
+
+async function sendMessage() {
+
+    const input = document.getElementById("message");
+
+    const message = input.value.trim();
+
+    if (!message) return;
+
+    addMessage(
+        "You",
+        message,
+        "user"
+    );
+
+    input.value = "";
+
+    const response = await fetch(
+        "/api/chat",
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                message: message
+            })
+        }
+    );
+
+    const data = await response.json();
+
+    addMessage(
+        "AI",
+        data.response,
+        "assistant"
+    );
+
+    loadMemories();
+}
+
+
+// ============================================================
+// ADD MESSAGE TO UI
+// ============================================================
+
+function addMessage(
+    sender,
+    text,
+    type
+) {
+
+    const chat = document.getElementById("chat");
+
+    const div = document.createElement("div");
+
+    div.className = "message " + type;
+
+    div.innerHTML =
+        "<strong>" +
+        sender +
+        ":</strong><br>" +
+        escapeHtml(text);
+
+    chat.appendChild(div);
+
+    chat.scrollTop =
+        chat.scrollHeight;
+}
+
+
+// ============================================================
+// LOAD MEMORIES
+// ============================================================
+
+async function loadMemories() {
+
+    const response =
+        await fetch("/api/memories");
+
+    const memories =
+        await response.json();
+
+    const container =
+        document.getElementById("memories");
+
+    container.innerHTML = "";
+
+    memories.forEach(memory => {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "memory";
+
+        div.innerHTML = `
+
+            <div class="category">
+                ${escapeHtml(memory.category)}
+            </div>
+
+            <div class="fact">
+                ${escapeHtml(memory.fact)}
+            </div>
+
+            <button
+                onclick="editMemory(
+                    ${memory.id},
+                    '${escapeJs(memory.category)}',
+                    '${escapeJs(memory.fact)}'
+                )"
+            >
+                Edit
+            </button>
+
+            <button
+                class="delete"
+                onclick="deleteMemory(${memory.id})"
+            >
+                Delete
+            </button>
+        `;
+
+        container.appendChild(div);
+
+    });
+
+}
+
+
+// ============================================================
+// EDIT MEMORY
+// ============================================================
+
+async function editMemory(
+    id,
+    oldCategory,
+    oldFact
+) {
+
+    const category =
+        prompt(
+            "Category:",
+            oldCategory
+        );
+
+    if (!category) return;
+
+    const fact =
+        prompt(
+            "Fact:",
+            oldFact
+        );
+
+    if (!fact) return;
+
+    await fetch(
+        `/api/memories/${id}`,
+        {
+            method: "PUT",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                category: category,
+                fact: fact
+            })
+        }
+    );
+
+    loadMemories();
+}
+
+
+// ============================================================
+// DELETE MEMORY
+// ============================================================
+
+async function deleteMemory(id) {
+
+    if (
+        !confirm(
+            "Delete this memory permanently?"
+        )
+    ) return;
+
+    await fetch(
+        `/api/memories/${id}`,
+        {
+            method: "DELETE"
+        }
+    );
+
+    loadMemories();
+}
+
+
+// ============================================================
+// ENTER KEY
+// ============================================================
+
+function handleKey(event) {
+
+    if (event.key === "Enter") {
+
+        sendMessage();
+
+    }
+
+}
+
+
+// ============================================================
+// SECURITY
+// ============================================================
+
+function escapeHtml(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent = text;
+
+    return div.innerHTML;
+}
+
+
+function escapeJs(text) {
+
+    return text
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'");
+}
+
+
+// ============================================================
+// INITIAL LOAD
+// ============================================================
+
+loadMemories();
+
+
+</script>
+
+</body>
+
+</html>
